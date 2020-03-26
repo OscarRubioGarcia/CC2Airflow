@@ -1,0 +1,13 @@
+language: python
+python:
+  - "3.6"      # current default Python on Travis CI
+# command to install dependencies and coverage
+install:
+ - pip install -r requirements.txt
+ - pip install coverage
+# command to run tests
+script:
+ - invoke testApi
+ # command to upload coverage file
+after_success:
+ - bash <(curl -s https://codecov.io/bash)
