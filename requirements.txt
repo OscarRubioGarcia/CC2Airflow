@@ -1,0 +1,11 @@
+Flask
+Flask-RESTful
+Flask-Caching
+invoke
+waitress
+gunicorn
+cython
+numpy
+pandas
+pmdarima
+statsmodels
