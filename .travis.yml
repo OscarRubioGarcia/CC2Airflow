@@ -8,6 +8,3 @@ install:
 # command to run tests
 script:
  - invoke testApi
- # command to upload coverage file
-after_success:
- - bash <(curl -s https://codecov.io/bash)
