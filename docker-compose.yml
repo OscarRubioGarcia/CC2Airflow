@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  V1:
+    build: './V1'
+    restart: always
+    depends_on:
+      - mongoDB
+    environment:
+      - PORT=${V1_DOMAIN}
+    networks:
+      - local
+
+  V2:
+    build: './V2'
+    restart: always
+    depends_on:
+      - mongoDB
+    environment:
+      - PORT=${V2_DOMAIN}
+    networks:
+      - local
+
+  mongoDB:
+    build: './mongo'
+    restart: always
+    networks:
+      - local
+    healthcheck:
+      test: ["CMD", "/usr/bin/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+networks:
+  local:
+    driver: bridge
