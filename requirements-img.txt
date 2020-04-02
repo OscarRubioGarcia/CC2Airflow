@@ -1,0 +1,6 @@
+Flask
+Flask-RESTful
+Flask-Caching
+gunicorn
+pmdarima
+statsmodels
