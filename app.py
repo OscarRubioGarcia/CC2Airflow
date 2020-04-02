@@ -1,6 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_restful import abort
 import function
+import json
 
 app = Flask(__name__)
 
@@ -15,16 +16,33 @@ def hello():
 
 @app.route('/servicio/v1/prediccion/24horas')
 def version1predict24():
-    function.functionpredicthumidity(24)
-    function.functionpredicttemperature(24)
-    return jsonify({"YouCalled": "Predict24"}), 400
-
+    #dataset = request.args.get('dataset')
+    #hours = request.args.get('hours', type = int)
+	hours = 24
+    hum = function.functionpredicthumidity(hours)
+    temp = function.functionpredicttemperature(hours)
+    jsonresponse = function.generateresponse(hours, temp, hum)
+    return app.response_class(jsonresponse, status=200, mimetype='application/json')
 
 @app.route('/servicio/v1/prediccion/48horas')
 def version1predict48():
-    function.functionpredicthumidity(48)
-    function.functionpredicttemperature(48)
-    return jsonify({"YouCalled": "Predict48"}), 400
+    #dataset = request.args.get('dataset')
+    #hours = request.args.get('hours', type = int)
+	hours = 48
+    hum = function.functionpredicthumidity(hours)
+    temp = function.functionpredicttemperature(hours)
+    jsonresponse = function.generateresponse(hours, temp, hum)
+    return app.response_class(jsonresponse, status=200, mimetype='application/json')
+	
+@app.route('/servicio/v1/prediccion/72horas')
+def version1predict72():
+    #dataset = request.args.get('dataset')
+    #hours = request.args.get('hours', type = int)
+	hours = 72
+    hum = function.functionpredicthumidity(hours)
+    temp = function.functionpredicttemperature(hours)
+    jsonresponse = function.generateresponse(hours, temp, hum)
+    return app.response_class(jsonresponse, status=200, mimetype='application/json')
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8081, debug=False)

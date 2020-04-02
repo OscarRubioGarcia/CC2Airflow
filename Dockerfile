@@ -1,23 +1,25 @@
-FROM alpine:3.10
+FROM python:3.6-slim
 
 MAINTAINER Oscar Rubio Garcia 
 
 WORKDIR /code
 ENV PORT="DEFAULT"
 
-RUN apk update && apk upgrade && apk add py-pip linux-headers python3==3.6 py3-virtualenv python-dev bash
+RUN apt-get update && apt-get upgrade && apt-get install -y \
+        build-essential \
+        make \
+        gcc \
+        bash g++
 
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m virtualenv --python=/usr/bin/python3 $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+RUN pip install --no-cache-dir numpy cython 
+RUN pip install --no-cache-dir scipy
+RUN pip install --no-cache-dir scikit-learn
+RUN pip install --no-cache-dir pandas
 
-COPY requirements.txt requirements.txt
+COPY requirements-img.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN rm -rf requirements.txt
 
 COPY tasks.py app.py function.py humidity.csv temperature.csv tests /code/
 
-RUN addgroup -S dockergroup && adduser -S dockeruser -G dockergroup -h /code
-USER dockeruser
-
-CMD invoke runGunicorn -p ${PORT}
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
