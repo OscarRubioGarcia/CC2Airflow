@@ -1,28 +1,10 @@
 version: '3'
 
 services:
-  V1:
-    build: './V1'
-    restart: always
-    depends_on:
-      - mongoDB
-    environment:
-      - PORT=${V1_DOMAIN}
-    networks:
-      - local
-
-  V2:
-    build: './V2'
-    restart: always
-    depends_on:
-      - mongoDB
-    environment:
-      - PORT=${V2_DOMAIN}
-    networks:
-      - local
-
-  mongoDB:
-    build: './mongo'
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
     restart: always
     networks:
       - local
@@ -31,6 +13,37 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
+  mongo-seed:
+    build: ./mongo
+    networks:
+      - local
+    links:
+      - mongodb
+
+  v1:
+    build: './V1'
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=${V1_DOMAIN}
+    networks:
+      - local
+    links:
+      - mongodb
+
+  v2:
+    build: './V2'
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=${V2_DOMAIN}
+    networks:
+      - local
+    links:
+      - mongodb
 
 networks:
   local:

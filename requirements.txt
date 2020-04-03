@@ -9,3 +9,4 @@ numpy
 pandas
 pmdarima
 statsmodels
+pymongo
