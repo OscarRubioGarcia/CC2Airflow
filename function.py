@@ -4,15 +4,17 @@ import pmdarima as pm
 import numpy as np
 import json
 import datetime
+import mongoconection as mongoc
 
 def functionpredicttemperature(hours):
-    df = pd.read_csv('temperature.csv')
-    df["datetime"] = pd.to_datetime(df["datetime"])
-    sanfrancisco = df[['datetime', 'San Francisco']] 
+    #df = pd.read_csv('temperature.csv')
+    df = mongoc.loaddatafrommongo()
+    df["DATE"] = pd.to_datetime(df["DATE"])
+    sanfrancisco = df[['DATE', 'TEMP']] 
     sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
 	
-    model = pm.auto_arima(sanfrancisco["San Francisco"], start_p=1, start_q=1,
+    model = pm.auto_arima(sanfrancisco["TEMP"], start_p=1, start_q=1,
                           test='adf',  # use adftest to find optimal 'd'
                           max_p=3, max_q=3,  # maximum p and q
                           m=1,  # frequency of series
@@ -33,13 +35,13 @@ def functionpredicttemperature(hours):
     return fc
 
 def functionpredicthumidity( hours):
-    df = pd.read_csv('humidity.csv')
-    df["datetime"] = pd.to_datetime(df["datetime"])
-    sanfrancisco = df[['datetime', 'San Francisco']] 
+    df = mongoc.loaddatafrommongo()
+    df["DATE"] = pd.to_datetime(df["DATE"])
+    sanfrancisco = df[['DATE', 'HUM']] 
     sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
 	
-    model = pm.auto_arima(sanfrancisco["San Francisco"], start_p=1, start_q=1,
+    model = pm.auto_arima(sanfrancisco["HUM"], start_p=1, start_q=1,
                           test='adf',  # use adftest to find optimal 'd'
                           max_p=3, max_q=3,  # maximum p and q
                           m=1,  # frequency of series
