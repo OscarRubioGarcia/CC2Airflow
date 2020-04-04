@@ -4,18 +4,20 @@ import pandas as pd
 import numpy as np
 import json
 import datetime
+import mongoconection as mongoc
 
 
 def functionpredicttemperature(hours):
-    df = pd.read_csv('temperature.csv')
-    df["datetime"] = pd.to_datetime(df["datetime"])
-    sanfrancisco = df[['datetime', 'San Francisco']]
+    #df = pd.read_csv('temperature.csv')
+	df = mongoc.loaddatafrommongo()
+    df["DATE"] = pd.to_datetime(df["DATE"])
+    sanfrancisco = df[['DATE', 'TEMP']]
     sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
-    sanfrancisco['datetime'] = sanfrancisco['datetime'].apply(datetime_to_float)
+    sanfrancisco['DATE'] = sanfrancisco['DATE'].apply(datetime_to_float)
     
-    y = np.array(sanfrancisco['San Francisco'])
-    X = sanfrancisco.drop('San Francisco', axis = 1)
+    y = np.array(sanfrancisco['TEMP'])
+    X = sanfrancisco.drop('TEMP', axis = 1)
     X = np.array(sanfrancisco)
 
     # 42 is to ensure same seed results
@@ -24,10 +26,10 @@ def functionpredicttemperature(hours):
     rfmodel = RandomForestRegressor(n_estimators=100, random_state=42, max_features=1, oob_score=True)
     rfmodel = rfmodel.fit(X_train, y_train)
 
-    predictThis = pd.DataFrame({"datetime": generateTimeRange(hours)})
-    predictThis['datetime'] = pd.to_datetime(predictThis['datetime'], format='%Y-%m-%d %H:%M:%S')
-    predictThis['datetime'] = predictThis['datetime'].apply(datetime_to_float)
-    topredict = predictThis['datetime'].to_frame()
+    predictThis = pd.DataFrame({"DATE": generateTimeRange(hours)})
+    predictThis['DATE'] = pd.to_datetime(predictThis['DATE'], format='%Y-%m-%d %H:%M:%S')
+    predictThis['DATE'] = predictThis['DATE'].apply(datetime_to_float)
+    topredict = predictThis['DATE'].to_frame()
 
     pred = rfmodel.predict(X_test)
     
@@ -35,15 +37,15 @@ def functionpredicttemperature(hours):
 
 
 def functionpredicthumidity(hours):
-    df = pd.read_csv('humidity.csv')
-    df["datetime"] = pd.to_datetime(df["datetime"])
-    sanfrancisco = df[['datetime', 'San Francisco']]
+    df = mongoc.loaddatafrommongo()
+    df["DATE"] = pd.to_datetime(df["DATE"])
+    sanfrancisco = df[['DATE', 'HUM']]
     sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
-    sanfrancisco['datetime'] = sanfrancisco['datetime'].apply(datetime_to_float)
+    sanfrancisco['DATE'] = sanfrancisco['DATE'].apply(datetime_to_float)
 
-    y = np.array(sanfrancisco['San Francisco'])
-    X = sanfrancisco.drop('San Francisco', axis = 1)
+    y = np.array(sanfrancisco['HUM'])
+    X = sanfrancisco.drop('HUM', axis = 1)
     X = np.array(sanfrancisco)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -51,10 +53,10 @@ def functionpredicthumidity(hours):
     rfmodel = RandomForestRegressor(n_estimators=100, random_state=42, max_features=1, oob_score=True)
     rfmodel = rfmodel.fit(X_train, y_train)
 
-    predictThis = pd.DataFrame({"datetime": generateTimeRange(hours)})
-    predictThis['datetime'] = pd.to_datetime(predictThis['datetime'], format='%Y-%m-%d %H:%M:%S')
-    predictThis['datetime'] = predictThis['datetime'].apply(datetime_to_float)
-    topredict = predictThis['datetime'].to_frame()
+    predictThis = pd.DataFrame({"DATE": generateTimeRange(hours)})
+    predictThis['DATE'] = pd.to_datetime(predictThis['DATE'], format='%Y-%m-%d %H:%M:%S')
+    predictThis['DATE'] = predictThis['DATE'].apply(datetime_to_float)
+    topredict = predictThis['DATE'].to_frame()
 
     pred = rfmodel.predict(X_test)
     
