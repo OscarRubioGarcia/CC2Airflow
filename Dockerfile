@@ -5,7 +5,7 @@ MAINTAINER Oscar Rubio Garcia
 WORKDIR /code
 ENV PORT="DEFAULT"
 
-RUN apt-get update && apt-get upgrade && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         build-essential \
         make \
         gcc \
