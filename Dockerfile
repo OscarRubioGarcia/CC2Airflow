@@ -20,6 +20,6 @@ COPY requirements-img.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN rm -rf requirements.txt
 
-COPY tasks.py app.py function.py humidity.csv temperature.csv tests /code/
+COPY tasks.py app.py function.py mongoconection.py tests /code/
 
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]

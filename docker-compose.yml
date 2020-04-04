@@ -23,27 +23,27 @@ services:
 
   v1:
     build: './V1'
+    ports:
+      - "5000:5000"
     restart: always
     depends_on:
       - mongodb
     environment:
-      - PORT=${V1_DOMAIN}
+      - PORT=5000
     networks:
       - local
-    links:
-      - mongodb
 
   v2:
     build: './V2'
+    ports:
+      - "5050:5050"
     restart: always
     depends_on:
       - mongodb
     environment:
-      - PORT=${V2_DOMAIN}
+      - PORT=5050
     networks:
       - local
-    links:
-      - mongodb
 
 networks:
   local:
