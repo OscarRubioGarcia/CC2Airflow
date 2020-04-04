@@ -11,7 +11,8 @@ def functionpredicttemperature(hours):
     df = mongoc.loaddatafrommongo()
     df["DATE"] = pd.to_datetime(df["DATE"])
     sanfrancisco = df[['DATE', 'TEMP']] 
-    sanfrancisco = sanfrancisco.dropna()
+    sanfrancisco['TEMP'] = pd.to_numeric(df['TEMP'],errors='coerce')
+	sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
 	
     model = pm.auto_arima(sanfrancisco["TEMP"], start_p=1, start_q=1,
@@ -38,7 +39,8 @@ def functionpredicthumidity( hours):
     df = mongoc.loaddatafrommongo()
     df["DATE"] = pd.to_datetime(df["DATE"])
     sanfrancisco = df[['DATE', 'HUM']] 
-    sanfrancisco = sanfrancisco.dropna()
+    sanfrancisco['HUM'] = pd.to_numeric(df['HUM'],errors='coerce')
+	sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
 	
     model = pm.auto_arima(sanfrancisco["HUM"], start_p=1, start_q=1,
