@@ -7,14 +7,14 @@ import datetime
 import mongoconection as mongoc
 
 def functionpredicttemperature(hours):
-    #df = pd.read_csv('temperature.csv')
+    # df = pd.read_csv('temperature.csv')
     df = mongoc.loaddatafrommongo()
     df["DATE"] = pd.to_datetime(df["DATE"])
-    sanfrancisco = df[['DATE', 'TEMP']] 
-    sanfrancisco['TEMP'] = pd.to_numeric(df['TEMP'],errors='coerce')
-	sanfrancisco = sanfrancisco.dropna()
+    sanfrancisco = df[['DATE', 'TEMP']]
+    sanfrancisco['TEMP'] = pd.to_numeric(df['TEMP'], errors='coerce')
+    sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
-	
+    
     model = pm.auto_arima(sanfrancisco["TEMP"], start_p=1, start_q=1,
                           test='adf',  # use adftest to find optimal 'd'
                           max_p=3, max_q=3,  # maximum p and q
@@ -27,22 +27,22 @@ def functionpredicttemperature(hours):
                           error_action='ignore',
                           suppress_warnings=True,
                           stepwise=True)
-
+    
     # Forecast
     n_periods = hours  # X days
     fc, confint = model.predict(n_periods=n_periods, return_conf_int=True)
-
+    
     # fc contains the forecasting for the next X hours.
     return fc
 
-def functionpredicthumidity( hours):
+def functionpredicthumidity(hours):
     df = mongoc.loaddatafrommongo()
     df["DATE"] = pd.to_datetime(df["DATE"])
-    sanfrancisco = df[['DATE', 'HUM']] 
-    sanfrancisco['HUM'] = pd.to_numeric(df['HUM'],errors='coerce')
-	sanfrancisco = sanfrancisco.dropna()
+    sanfrancisco = df[['DATE', 'HUM']]
+    sanfrancisco['HUM'] = pd.to_numeric(df['HUM'], errors='coerce')
+    sanfrancisco = sanfrancisco.dropna()
     sanfrancisco = sanfrancisco.head(1000)
-	
+    
     model = pm.auto_arima(sanfrancisco["HUM"], start_p=1, start_q=1,
                           test='adf',  # use adftest to find optimal 'd'
                           max_p=3, max_q=3,  # maximum p and q
@@ -55,13 +55,14 @@ def functionpredicthumidity( hours):
                           error_action='ignore',
                           suppress_warnings=True,
                           stepwise=True)
-
+    
     # Forecast
     n_periods = hours  # X days
     fc, confint = model.predict(n_periods=n_periods, return_conf_int=True)
-
+    
     # fc contains the forecasting for the next X hours.
     return fc
+	
 
 def generateresponse( time, arrayT, arrayH):
     dt = datetime.datetime.now() + datetime.timedelta(hours=1)
